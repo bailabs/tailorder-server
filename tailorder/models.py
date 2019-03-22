@@ -4,18 +4,21 @@ from . import db
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String)
+    lines = db.Column(db.String)
+    table_no = db.Column(db.Integer)
 
-    def __init__(self, text):
-        self.text = text
+    def __init__(self, lines, table_no):
+        self.lines = lines
+        self.table_no = table_no
 
     @staticmethod
     def from_json(json_dict):
-        text = json_dict.get('text')
-        return Order(text=text)
+        lines = json_dict.get('lines')
+        table_no = json_dict.get('table_no')
+        return Order(lines, table_no)
 
     def to_json(self):
         return {
-            'id': self.id,
-            'text': self.text
+            'lines': self.lines,
+            'table_no': self.table_no,
         }
