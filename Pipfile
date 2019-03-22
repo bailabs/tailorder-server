@@ -8,5 +8,7 @@ python_version = "3.5"
 
 [packages]
 flask = "*"
+pytest = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
