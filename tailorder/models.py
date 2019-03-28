@@ -6,10 +6,12 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lines = db.Column(db.String)
     table_no = db.Column(db.Integer)
+    is_fulfilled = db.Column(db.Boolean)
 
     def __init__(self, lines, table_no):
         self.lines = lines
         self.table_no = table_no
+        self.is_fulfilled = False
 
     @staticmethod
     def from_json(json_dict):
@@ -19,6 +21,7 @@ class Order(db.Model):
 
     def to_json(self):
         return {
+            'id': self.id,
             'lines': self.lines,
             'table_no': self.table_no,
         }
