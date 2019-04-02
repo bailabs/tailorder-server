@@ -4,6 +4,7 @@ from flask.json import loads, dumps
 from . import api
 from .. import db
 from ..models import Order
+from ..escpos import write_order
 
 
 @api.route('/complete_order', methods=['POST'])
@@ -17,6 +18,19 @@ def complete_order():
         existing_order.is_fulfilled = True
 
     db.session.commit()
+
+    return jsonify(Order.to_json(existing_order)), 200
+
+
+@api.route('/print_order', methods=['POST'])
+def print_order():
+    order_data = request.get_data(as_text=True)
+    order = loads(order_data)
+
+    existing_order = Order.query.get(order.get('id'))
+
+    if existing_order:
+        write_order(existing_order)
 
     return jsonify(Order.to_json(existing_order)), 200
 

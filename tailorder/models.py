@@ -1,4 +1,5 @@
 from . import db
+from flask.json import loads
 
 
 class Order(db.Model):
