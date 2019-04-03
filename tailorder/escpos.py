@@ -20,7 +20,13 @@ def write_order(order):
     lines = loads(order.lines)
 
     # Table Number
-    p.text('Table Number: {0}\n\n'.format(order.table_no))
+    p.text('Table Number: {0}\n'.format(order.table_no))
+
+    # Take Away
+    if order.is_takeaway:
+        p.text('Type: TAKE AWAY\n\n')
+    else:
+        p.text('Type: DINE IN\n\n')
 
     # Headers
     header_line = line_block([
