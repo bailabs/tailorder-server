@@ -55,6 +55,8 @@ def new_order():
 
         existing_order.lines = dumps(lines)
 
+        order = existing_order
+
     if not existing_order:
         db.session.add(order)
 
