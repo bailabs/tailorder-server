@@ -21,6 +21,9 @@ def write_order(order):
 
     lines = loads(order.lines)
 
+    # Order
+    p.text('Order Id: {0}\n'.format(order.id))
+
     # Table Number
     p.text('Table Number: {0}\n'.format(order.table_no))
 
