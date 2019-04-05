@@ -1,3 +1,5 @@
+import time
+
 from flask.json import loads
 from escpos.printer import File
 
@@ -43,5 +45,9 @@ def write_order(order):
             {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH},
         ])
         p.text(line_text)
+
+    # Time
+    p.text('\n\nPrinted on:\n')
+    p.text(time.ctime())
 
     p.cut()
