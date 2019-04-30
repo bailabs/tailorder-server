@@ -7,6 +7,21 @@ from ..models import Order
 from ..escpos import write_order
 
 
+@api.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    order_data = request.get_data(as_text=True)
+    order = loads(order_data)
+
+    existing_order = Order.query.get(order.get('id'))
+
+    if existing_order:
+        existing_order.is_cancelled = True
+
+    db.session.commit()
+
+    return jsonify(Order.to_json(existing_order)), 200
+
+
 @api.route('/complete_order', methods=['POST'])
 def complete_order():
     order_data = request.get_data(as_text=True)
@@ -37,7 +52,7 @@ def print_order():
 
 @api.route('/orders/')
 def get_orders():
-    return jsonify([order.to_json() for order in Order.query.filter_by(is_fulfilled=False)])
+    return jsonify([order.to_json() for order in Order.query.filter_by(is_fulfilled=False, is_cancelled=False)])
 
 
 @api.route('/orders', methods=['POST'])

@@ -9,13 +9,14 @@ class Order(db.Model):
     table_no = db.Column(db.Integer)
     is_takeaway = db.Column(db.Boolean)
     is_fulfilled = db.Column(db.Boolean)
+    is_cancelled = db.Column(db.Boolean)
 
     def __init__(self, lines, table_no, is_takeaway=False):
         self.lines = lines
         self.table_no = table_no
         self.is_takeaway = is_takeaway
-
         self.is_fulfilled = False
+        self.is_cancelled = False
 
     @staticmethod
     def from_json(json_dict):
