@@ -60,7 +60,7 @@ def new_order():
     order_data = request.get_data(as_text=True)
     order = Order.from_json(loads(order_data))
 
-    existing_order = Order.query.filter_by(table_no=order.table_no, is_fulfilled=False).first()
+    existing_order = Order.query.filter_by(table_no=order.table_no, is_fulfilled=False, is_cancelled=False).first()
 
     if existing_order:
         lines = loads(existing_order.lines)
