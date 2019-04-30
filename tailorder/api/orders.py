@@ -7,6 +7,21 @@ from ..models import Order
 from ..escpos import write_order
 
 
+@api.route('/change_table', methods=['POST'])
+def change_table():
+    order_data = request.get_data(as_text=True)
+    order = loads(order_data)
+
+    existing_order = Order.query.get(order.get('id'))
+
+    if existing_order:
+        existing_order.table_no = order.get('table')
+
+    db.session.commit()
+
+    return jsonify(Order.to_json(existing_order)), 200
+
+
 @api.route('/cancel_order', methods=['POST'])
 def cancel_order():
     order_data = request.get_data(as_text=True)
