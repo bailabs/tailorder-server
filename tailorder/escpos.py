@@ -49,6 +49,9 @@ def write_order(order):
         ])
         p.text(line_text)
 
+    # Remarks
+    p.text('\nRemarks:\n{0}'.format(order.remarks))
+
     # Time
     p.text('\n\nPrinted on:\n')
     p.text(time.ctime())

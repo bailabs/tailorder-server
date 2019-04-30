@@ -6,30 +6,34 @@ class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
     lines = db.Column(db.String)
+    remarks = db.Column(db.String)
     table_no = db.Column(db.Integer)
     is_takeaway = db.Column(db.Boolean)
     is_fulfilled = db.Column(db.Boolean)
     is_cancelled = db.Column(db.Boolean)
 
-    def __init__(self, lines, table_no, is_takeaway=False):
+    def __init__(self, lines, table_no, is_takeaway=False, remarks=None):
         self.lines = lines
         self.table_no = table_no
         self.is_takeaway = is_takeaway
         self.is_fulfilled = False
         self.is_cancelled = False
+        self.remarks = remarks
 
     @staticmethod
     def from_json(json_dict):
         lines = json_dict.get('lines')
         table_no = json_dict.get('table_no')
+        remarks = json_dict.get('remarks')
         is_takeaway = json_dict.get('is_takeaway')
 
-        return Order(lines, table_no, is_takeaway)
+        return Order(lines, table_no, is_takeaway, remarks)
 
     def to_json(self):
         return {
             'id': self.id,
             'lines': self.lines,
+            'remarks': self.remarks,
             'table_no': self.table_no,
-            'is_takeaway': self.is_takeaway
+            'is_takeaway': self.is_takeaway,
         }
