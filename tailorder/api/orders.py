@@ -7,6 +7,25 @@ from ..models import Order
 from ..escpos import write_order
 
 
+@api.route('/void_line', methods=['POST'])
+def void_line():
+    order_data = request.get_data(as_text=True)
+    order = loads(order_data)
+
+    existing_order = Order.query.get(order.get('id'))
+
+    if existing_order:
+        line = order.get('line')
+        lines = loads(existing_order.lines)
+
+        lines.pop(line)
+        existing_order.lines = dumps(lines)
+
+    db.session.commit()
+
+    return jsonify(Order.to_json(existing_order)), 200
+
+
 @api.route('/change_table', methods=['POST'])
 def change_table():
     order_data = request.get_data(as_text=True)
