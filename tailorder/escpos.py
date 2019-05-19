@@ -47,7 +47,12 @@ def write_order(order):
             {'text': line['qty'], 'align': '<', 'width': QTY_WIDTH},
             {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH},
         ])
+        item_name = line_block([
+            {'text': '-', 'align': '<', 'width': QTY_WIDTH},
+            {'text': line['itemName'], 'align': '<', 'width': ITEM_WIDTH}
+        ])
         p.text(line_text)
+        p.text(item_name)
 
     # Remarks
     p.text('\nRemarks:\n{0}'.format(order.remarks))
