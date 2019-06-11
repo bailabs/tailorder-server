@@ -1,7 +1,7 @@
 import time
 
 from flask.json import loads
-from escpos.printer import File
+from escpos.printer import File, Usb
 
 # Line Width
 QTY_WIDTH = 6
@@ -16,8 +16,11 @@ def line_block(contents):
     return ''.join([text_block(c['text'], c['width'], c['align']) for c in contents])
 
 
-def write_order(order):
-    p = File("/dev/usb/lp0")
+def write_order(order, usb_printer=None):
+    if usb_printer:
+        p = usb_printer
+    else:
+        p = File("/dev/usb/lp0")
 
     lines = loads(order.lines)
 
@@ -62,3 +65,13 @@ def write_order(order):
     p.text(time.ctime())
 
     p.cut()
+
+
+def get_usb(config):
+    return Usb(
+        config['id_vendor'],
+        config['id_product'],
+        0,
+        config['endpoint_in'],
+        config['endpoint_out']
+    )

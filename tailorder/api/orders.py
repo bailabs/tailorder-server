@@ -1,10 +1,10 @@
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from flask.json import loads, dumps
 
 from . import api
 from .. import db
 from ..models import Order
-from ..escpos import write_order
+from ..escpos import write_order, get_usb
 
 
 @api.route('/void_line', methods=['POST'])
@@ -79,7 +79,11 @@ def print_order():
     existing_order = Order.query.get(order.get('id'))
 
     if existing_order:
-        write_order(existing_order)
+        is_usb = current_app.config.get('USB')
+        if is_usb:
+            usb_config = _get_usb_config(current_app.config)
+            usb_printer = get_usb(usb_config)
+        write_order(existing_order, usb_printer)
 
     return jsonify(Order.to_json(existing_order)), 200
 
@@ -112,3 +116,12 @@ def new_order():
     db.session.commit()
 
     return jsonify(Order.to_json(order)), 201
+
+
+def _get_usb_config(config):
+    return {
+        'id_vendor': config.get('ID_VENDOR'),
+        'id_product': config.get('ID_PRODUCT'),
+        'endpoint_in': config.get('ENDPOINT_IN'),
+        'endpoint_out': config.get('ENDPOINT_OUT')
+    }
