@@ -16,7 +16,7 @@ def line_block(contents):
     return ''.join([text_block(c['text'], c['width'], c['align']) for c in contents])
 
 
-def write_order(order, usb_printer=None):
+def write_order(order, usb_printer=None, print_item_code=True):
     if usb_printer:
         p = usb_printer
     else:
@@ -48,14 +48,16 @@ def write_order(order, usb_printer=None):
     for line in lines:
         line_text = line_block([
             {'text': line['qty'], 'align': '<', 'width': QTY_WIDTH},
-            {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH},
-        ])
-        item_name = line_block([
-            {'text': '-', 'align': '<', 'width': QTY_WIDTH},
-            {'text': line['itemName'], 'align': '<', 'width': ITEM_WIDTH}
+            {'text': line['itemName'], 'align': '<', 'width': ITEM_WIDTH},
         ])
         p.text(line_text)
-        p.text(item_name)
+
+        if print_code:
+            item_code = line_block([
+                {'text': '-', 'align': '<', 'width': QTY_WIDTH},
+                {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH}
+            ])
+            p.text(item_code)
 
     # Remarks
     p.text('\nRemarks:\n{0}'.format(order.remarks))

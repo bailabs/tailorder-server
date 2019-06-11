@@ -80,10 +80,13 @@ def print_order():
 
     if existing_order:
         is_usb = current_app.config.get('USB')
+        print_item_code = current_app.config.get('PRINT_ITEM_CODE')
+
         if is_usb:
             usb_config = _get_usb_config(current_app.config)
             usb_printer = get_usb(usb_config)
-        write_order(existing_order, usb_printer)
+
+        write_order(existing_order, usb_printer, print_item_code)
 
     return jsonify(Order.to_json(existing_order)), 200
 
