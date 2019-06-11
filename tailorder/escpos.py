@@ -52,7 +52,7 @@ def write_order(order, usb_printer=None, print_item_code=True):
         ])
         p.text(line_text)
 
-        if print_code:
+        if print_item_code:
             item_code = line_block([
                 {'text': '-', 'align': '<', 'width': QTY_WIDTH},
                 {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH}
