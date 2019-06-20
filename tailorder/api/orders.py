@@ -3,7 +3,7 @@ from flask.json import loads, dumps
 
 from . import api
 from .. import db
-from ..models import Order
+from ..models import Order, OrderSeries
 from ..escpos import write_order, get_usb
 
 
@@ -103,6 +103,8 @@ def new_order():
 
     existing_order = Order.query.filter_by(table_no=order.table_no, is_fulfilled=False, is_cancelled=False).first()
 
+    series = _get_series_by_type(order.type)
+
     if existing_order:
         lines = loads(existing_order.lines)
 
@@ -114,7 +116,10 @@ def new_order():
         order = existing_order
 
     if not existing_order:
+        order.table_no = series.idx
+        series.idx = series.idx + 1
         db.session.add(order)
+        db.session.add(series)
 
     db.session.commit()
 
@@ -128,3 +133,7 @@ def _get_usb_config(config):
         'endpoint_in': config.get('ENDPOINT_IN'),
         'endpoint_out': config.get('ENDPOINT_OUT')
     }
+
+
+def _get_series_by_type(type):
+    return OrderSeries.query.filter_by(type=type).first()

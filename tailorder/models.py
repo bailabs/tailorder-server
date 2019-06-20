@@ -42,11 +42,10 @@ class Order(db.Model):
 
 
 class OrderSeries(db.Model):
-    __table__ = 'order_series'
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(64))
-    last_idx = db.Column(db.Integer)
+    type = db.Column(db.String)
+    idx = db.Column(db.Integer)
 
-    def __init__(self, type):
+    def __init__(self, type, idx):
         self.type = type
-        self.last_idx = 0
+        self.idx = idx
