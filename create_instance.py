@@ -12,7 +12,7 @@ app = create_app()
 
 with app.app_context():
     print("[TailOrder] Initializing database")
-
+    db.drop_all()
     db.create_all()
 
     for type, idx in ORDER_TYPES.items():
