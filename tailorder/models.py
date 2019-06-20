@@ -40,3 +40,14 @@ class Order(db.Model):
             'table_no': self.table_no,
             'is_takeaway': self.is_takeaway,
         }
+
+
+class OrderSeries(db.Model):
+    __table__ = 'order_series'
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(64))
+    last_idx = db.Column(db.Integer)
+
+    def __init__(self, type):
+        self.type = type
+        self.last_idx = 0
