@@ -8,6 +8,34 @@ QTY_WIDTH = 6
 ITEM_WIDTH = 26
 
 
+def write_additional(table_no, lines, usb_printer=None, print_item_code=True):
+    p = usb_printer if usb_printer else File("/dev/usb/lp0")
+    p.text('Table Number: {0}\n'.format(table_no))
+    p.text('ADDITIONAL ITEMS\n\n')
+    p.text(line_block([
+        {'text': 'Qty', 'align': '<', 'width': QTY_WIDTH},
+        {'text': 'Item', 'align': '<', 'width': ITEM_WIDTH}
+    ]))
+
+    for line in lines:
+        p.text(line_block([
+            {'text': line['qty'], 'align': '<', 'width': QTY_WIDTH},
+            {'text': line['itemName'], 'align': '<', 'width': ITEM_WIDTH},
+        ]))
+
+        if print_item_code:
+            p.text(line_block([
+                {'text': '-', 'align': '<', 'width': QTY_WIDTH},
+                {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH}
+            ]))
+
+    # Time
+    p.text('\n\nPrinted on:\n')
+    p.text(time.ctime())
+
+    p.cut()
+
+
 def write_order(order, usb_printer=None, print_item_code=True):
     if usb_printer:
         p = usb_printer
