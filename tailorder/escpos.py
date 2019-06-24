@@ -8,14 +8,6 @@ QTY_WIDTH = 6
 ITEM_WIDTH = 26
 
 
-def text_block(text, width, align):
-    return '{text:{align}{width}}'.format(text=text, align=align, width=width)
-
-
-def line_block(contents):
-    return ''.join([text_block(c['text'], c['width'], c['align']) for c in contents])
-
-
 def write_order(order, usb_printer=None, print_item_code=True):
     if usb_printer:
         p = usb_printer
@@ -77,3 +69,11 @@ def get_usb(config):
         config['endpoint_in'],
         config['endpoint_out']
     )
+
+
+def text_block(text, width, align):
+    return '{text:{align}{width}}'.format(text=text, align=align, width=width)
+
+
+def line_block(contents):
+    return ''.join([text_block(c['text'], c['width'], c['align']) for c in contents])
