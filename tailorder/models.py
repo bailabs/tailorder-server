@@ -28,6 +28,12 @@ class Order(db.Model):
         remarks = json_dict.get('remarks')
         table_no = json_dict.get('table_no')
         is_takeaway = json_dict.get('is_takeaway')
+
+        if is_takeaway:
+            type = "Takeaway"
+        if not type:
+            type = "Dine-in"
+
         return Order(lines, table_no, is_takeaway, remarks, type)
 
     def to_json(self):
