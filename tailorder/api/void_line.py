@@ -11,7 +11,7 @@ def void_line():
     order, request_data = get_existing_order_from_request()
 
     lines = loads(order.lines)
-    lines.pop(order.get('line'))
+    lines.pop(request_data.get('line'))
 
     order.lines = dumps(lines)
 

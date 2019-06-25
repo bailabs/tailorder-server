@@ -9,7 +9,7 @@ def cancel_order():
     Set the order as cancelled
     :return:
     """
-    order = get_existing_order_from_request()
+    order, request_data = get_existing_order_from_request()
     order.is_cancelled = True
 
     db.session.commit()

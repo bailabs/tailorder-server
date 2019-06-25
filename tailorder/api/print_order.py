@@ -11,7 +11,7 @@ def print_order():
     Get the existing Order based from the request
     :return:
     """
-    order = get_existing_order_from_request()
+    order, request_data = get_existing_order_from_request()
 
     is_usb = get_config(current_app, 'USB')
     print_item_code = get_config(current_app, 'PRINT_ITEM_CODE')
