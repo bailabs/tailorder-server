@@ -1,10 +1,8 @@
 from flask import current_app
-from flask.json import jsonify
 
 from . import api
-from ..models import Order
 from ..escpos import get_usb, write_order
-from ..helpers import get_existing_order_from_request, get_config, get_usb_config
+from ..helpers import get_existing_order_from_request, get_config, get_usb_config, post_process_order
 
 
 @api.route('/print_order', methods=['POST'])
@@ -23,4 +21,4 @@ def print_order():
 
     write_order(order, usb_printer, print_item_code)
 
-    return jsonify(Order.to_json(order)), 201
+    return post_process_order(order), 201

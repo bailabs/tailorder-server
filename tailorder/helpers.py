@@ -1,5 +1,5 @@
 from flask import request
-from flask.json import loads
+from flask.json import loads, jsonify
 
 from .models import Order
 
@@ -22,3 +22,7 @@ def get_existing_order_from_request():
     return Order.query.get(
         order.get('id')
     )
+
+
+def post_process_order(order):
+    return jsonify(Order.to_json(order))

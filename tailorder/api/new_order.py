@@ -4,7 +4,7 @@ from flask.json import loads, dumps
 from . import api
 from .. import db
 from ..models import Order, OrderSeries
-from ..helpers import get_config, get_usb_config
+from ..helpers import get_config, get_usb_config, post_process_order
 from ..escpos import get_usb, write_additional
 
 
@@ -55,4 +55,4 @@ def new_order():
 
     db.session.commit()
 
-    return jsonify(Order.to_json(order)), 201
+    return post_process_order(order), 201
