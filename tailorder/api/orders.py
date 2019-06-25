@@ -23,19 +23,6 @@ def void_line():
     return jsonify(Order.to_json(existing_order)), 200
 
 
-@api.route('/change_table', methods=['POST'])
-def change_table():
-    order = _get_order_from_request()
-    existing_order = _get_existing_order_by_id(order.get('id'))
-
-    if existing_order:
-        existing_order.table_no = order.get('table')
-
-    db.session.commit()
-
-    return jsonify(Order.to_json(existing_order)), 200
-
-
 def _get_order_from_request():
     return loads(request.get_data(as_text=True))
 

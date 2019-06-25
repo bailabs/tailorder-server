@@ -19,9 +19,7 @@ def get_usb_config(app):
 
 def get_existing_order_from_request():
     order = loads(request.get_data(as_text=True))
-    return Order.query.get(
-        order.get('id')
-    )
+    return Order.query.get(order.get('id')), order
 
 
 def post_process_order(order):
