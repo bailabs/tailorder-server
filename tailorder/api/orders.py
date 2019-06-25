@@ -4,7 +4,7 @@ from flask.json import loads, dumps
 from . import api
 from .. import db
 from ..models import Order, OrderSeries
-from ..escpos import write_order, get_usb
+from ..escpos import write_order, get_usb, write_additional
 
 
 @api.route('/void_line', methods=['POST'])
@@ -110,6 +110,15 @@ def new_order():
 
         new_lines = loads(order.lines)
         lines.extend(new_lines)
+
+        is_usb = current_app.config.get('USB')
+        print_item_code = current_app.config.get('PRINT_ITEM_CODE')
+
+        if is_usb:
+            usb_config = _get_usb_config(current_app.config)
+            usb_printer = get_usb(usb_config)
+
+        write_additional(existing_order.table_no, new_lines, usb_printer, print_item_code)
 
         existing_order.lines = dumps(lines)
 
