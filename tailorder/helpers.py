@@ -1,3 +1,9 @@
+from flask import request
+from flask.json import loads
+
+from .models import Order
+
+
 def get_config(app, key):
     return app.config.get(key)
 
@@ -9,3 +15,10 @@ def get_usb_config(app):
         'endpoint_in': app.config.get('ENDPOINT_IN'),
         'endpoint_out': app.config.get('ENDPOINT_OUT')
     }
+
+
+def get_existing_order_from_request():
+    order = loads(request.get_data(as_text=True))
+    return Order.query.get(
+        order.get('id')
+    )
