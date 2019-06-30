@@ -8,6 +8,30 @@ QTY_WIDTH = 6
 ITEM_WIDTH = 26
 
 
+def write_void(table_no, lines, usb_printer=None, print_item_code=True):
+    p = usb_printer if usb_printer else File("/dev/usb/lp0")
+    p.text('Table Number: {0}\n'.format(table_no))
+    p.text('***VOID ITEMS***\n\n')
+    p.text(line_block([
+        {'text': 'Item', 'align': '<', 'width': QTY_WIDTH + ITEM_WIDTH}
+    ]))
+
+    for line in lines:
+        p.text(line_block([
+            {'text': line['itemName'], 'align': '<', 'width': QTY_WIDTH + ITEM_WIDTH}
+        ]))
+
+        if print_item_code:
+            p.text(line_block([
+                {'text': line['itemCode'], 'align': '<', 'width': QTY_WIDTH + ITEM_WIDTH}
+            ]))
+
+    p.text('\n\nPrinted on:\n')
+    p.text(time.ctime())
+
+    p.cut()
+
+
 def write_additional(table_no, lines, usb_printer=None, print_item_code=True):
     p = usb_printer if usb_printer else File("/dev/usb/lp0")
     p.text('Table Number: {0}\n'.format(table_no))
