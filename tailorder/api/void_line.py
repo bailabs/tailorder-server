@@ -11,9 +11,13 @@ def void_line():
     order, request_data = get_existing_order_from_request()
 
     lines = loads(order.lines)
-    lines.pop(request_data.get('line'))
+
+    voided_line = (lines.pop(request_data.get('line')))
+    qty = voided_line['qty']
+    item_name = voided_line['itemName']
 
     order.lines = dumps(lines)
+    order.remarks = order.remarks + '\nVOID {0} x {1}'.format(qty, item_name)
 
     db.session.commit()
 
