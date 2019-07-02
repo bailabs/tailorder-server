@@ -2,12 +2,14 @@
 # MIT License. See license.txt
 # ----------------------------
 from flask import Flask, jsonify
+from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from .config import Config
 
 __version__ = '0.1.2'
 
 db = SQLAlchemy()
+socketio = SocketIO()
 
 
 def create_app():
@@ -15,6 +17,7 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
+    socketio.init_app(app)
 
     from .api import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api/v1')

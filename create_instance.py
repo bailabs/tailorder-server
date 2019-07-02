@@ -1,4 +1,4 @@
-from tailorder import create_app, db
+from tailorder import create_app, db, socketio
 from tailorder.models import OrderSeries
 
 ORDER_TYPES = {
@@ -10,14 +10,18 @@ ORDER_TYPES = {
 
 app = create_app()
 
-with app.app_context():
-    print("[TailOrder] Initializing database")
-    db.drop_all()
-    db.create_all()
+if __name__ == '__main__':
 
-    for type, idx in ORDER_TYPES.items():
-        db.session.add(
-            OrderSeries(type, idx)
-        )
+    with app.app_context():
+        print("[TailOrder] Initializing database")
+        db.drop_all()
+        db.create_all()
 
-    db.session.commit()
+        for type, idx in ORDER_TYPES.items():
+            db.session.add(
+                OrderSeries(type, idx)
+            )
+
+        db.session.commit()
+
+    socketio.run(app, host='0.0.0.0')

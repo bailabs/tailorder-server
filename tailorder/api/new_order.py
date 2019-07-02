@@ -1,5 +1,6 @@
 from flask import jsonify, request, current_app
 from flask.json import loads, dumps
+from flask_socketio import send, emit
 
 from . import api
 from .. import db
@@ -52,6 +53,8 @@ def new_order():
         series.idx = series.idx + 1
         db.session.add(order)
         db.session.add(series)
+
+        send(order.to_json(), namespace='/', broadcast=True)
 
     db.session.commit()
 
