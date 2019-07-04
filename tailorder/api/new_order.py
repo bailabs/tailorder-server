@@ -53,7 +53,7 @@ def new_order():
         existing_order.lines = dumps(existing_lines)
         order = existing_order
 
-        emit_update(order, additional_lines, 'additional')
+        emit_update(order, 'additional', additional_lines)
     else:
         order.table_no = series.idx
         series.idx = series.idx + 1
