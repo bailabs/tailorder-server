@@ -15,6 +15,6 @@ def complete_order():
 
     db.session.commit()
 
-    emit_update(order, 'complete')
+    emit_update(order, 'fulfill')
 
     return post_process_order(order), 200
