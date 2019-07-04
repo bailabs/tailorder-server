@@ -60,8 +60,9 @@ def new_order():
         db.session.add(order)
         db.session.add(series)
 
-        emit_create(order)
-
     db.session.commit()
+
+    if not existing_order:
+        emit_create(order)
 
     return post_process_order(order), 201
