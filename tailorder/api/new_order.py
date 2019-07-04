@@ -1,12 +1,13 @@
 from flask import jsonify, request, current_app
 from flask.json import loads, dumps
-from flask_socketio import send, emit
 
 from . import api
 from .. import db
 from ..models import Order, OrderSeries
 from ..helpers import get_config, get_usb_config, post_process_order
 from ..escpos import get_usb, write_additional
+
+from ..socketio import emit_create, emit_update
 
 
 @api.route('/orders', methods=['POST'])
@@ -35,26 +36,31 @@ def new_order():
         is_usb = get_config(current_app, 'USB')
         print_item_code = get_config(current_app, 'PRINT_ITEM_CODE')
 
-        if is_usb:
-            usb_printer = get_usb(get_usb_config(current_app))
+        try:
+            if is_usb:
+                usb_printer = get_usb(get_usb_config(current_app))
 
-        write_additional(
-            existing_order.table_no,
-            additional_lines,
-            usb_printer,
-            print_item_code
-        )
+            write_additional(
+                existing_order.table_no,
+                additional_lines,
+                usb_printer,
+                print_item_code
+            )
+        except:
+            print('Unable to print')
 
         existing_lines.extend(additional_lines)
         existing_order.lines = dumps(existing_lines)
         order = existing_order
+
+        emit_update(order, additional_lines, 'additional')
     else:
         order.table_no = series.idx
         series.idx = series.idx + 1
         db.session.add(order)
         db.session.add(series)
 
-        send(order.to_json(), namespace='/', broadcast=True)
+        emit_create(order)
 
     db.session.commit()
 
