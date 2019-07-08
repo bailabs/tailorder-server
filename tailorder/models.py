@@ -12,7 +12,7 @@ class Order(db.Model):
 
     def __init__(self, table_no, order_type, items, remarks=None):
         self.table_no = table_no
-        self.type = order_type # it overshadows type
+        self.type = order_type  # it overshadows type
         self.items = items
         self.remarks = remarks
 

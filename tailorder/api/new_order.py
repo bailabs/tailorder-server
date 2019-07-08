@@ -26,9 +26,6 @@ def new_order():
         is_cancelled=False
     ).first()
 
-    order_type = existing_order.type if existing_order else order.type
-    series = OrderSeries.query.filter_by(type=order_type).first()
-
     if existing_order:
         existing_lines = loads(existing_order.lines)
         additional_lines = loads(order.lines)
@@ -55,8 +52,11 @@ def new_order():
 
         emit_update(order, 'additional', additional_lines)
     else:
+        series = _get_order_series(order.type)
+
         order.table_no = series.idx
         series.idx = series.idx + 1
+
         db.session.add(order)
         db.session.add(series)
 
@@ -66,3 +66,9 @@ def new_order():
         emit_create(order)
 
     return post_process_order(order), 201
+
+
+def _get_order_series(order_type):
+    return OrderSeries.query.filter_by(
+        type=order_type
+    ).first()
