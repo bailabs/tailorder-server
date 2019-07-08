@@ -82,6 +82,9 @@ class OrderSeries(db.Model):
         self.type = type
         self.idx = idx
 
+    def increment(self):
+        self.idx = self.idx + 1
+
 
 def _create_order_items(items):
     order_items = []

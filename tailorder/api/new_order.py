@@ -27,8 +27,7 @@ def new_order():
     ).first()
 
     if existing_order:
-        existing_lines = loads(existing_order.lines)
-        additional_lines = loads(order.lines)
+        additional_items = order.items
 
         is_usb = get_config(current_app, 'USB')
         print_item_code = get_config(current_app, 'PRINT_ITEM_CODE')
@@ -39,23 +38,22 @@ def new_order():
 
             write_additional(
                 existing_order.table_no,
-                additional_lines,
+                additional_items,
                 usb_printer,
                 print_item_code
             )
         except:
             print('Unable to print')
 
-        existing_lines.extend(additional_lines)
-        existing_order.lines = dumps(existing_lines)
-        order = existing_order
+        for item in additional_items:
+            existing_order.items.append(item)
 
-        emit_update(order, 'additional', additional_lines)
+        order = existing_order
     else:
         series = _get_order_series(order.type)
 
         order.table_no = series.idx
-        series.idx = series.idx + 1
+        series.increment()
 
         db.session.add(order)
         db.session.add(series)
@@ -64,6 +62,8 @@ def new_order():
 
     if not existing_order:
         emit_create(order)
+    else:
+        emit_update(order, 'additional')
 
     return post_process_order(order), 201
 
