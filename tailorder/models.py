@@ -4,55 +4,40 @@ from . import db
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String)
-    lines = db.Column(db.String)
-    remarks = db.Column(db.String)
     table_no = db.Column(db.Integer)
-    is_takeaway = db.Column(db.Boolean)
+    items = db.relationship('OrderItem', backref='order', lazy=True)
+    remarks = db.Column(db.String)
     is_fulfilled = db.Column(db.Boolean)
     is_cancelled = db.Column(db.Boolean)
 
-    items = db.relationship('OrderItem', backref='order', lazy=True)
-
-    def __init__(self, lines, table_no, is_takeaway=False, remarks=None, type=None, items=None):
-        self.lines = lines
+    def __init__(self, table_no, order_type, items, remarks=None):
         self.table_no = table_no
-        self.is_takeaway = is_takeaway
+        self.type = order_type # it overshadows type
+        self.items = items
+        self.remarks = remarks
+
         self.is_fulfilled = False
         self.is_cancelled = False
-        self.remarks = remarks
-        self.type = type
-
-        if items:
-            self.items.extend(items)
 
     @staticmethod
     def from_json(json_dict):
         type = json_dict.get('type')
-        lines = json_dict.get('lines')
         remarks = json_dict.get('remarks')
         table_no = json_dict.get('table_no')
-        is_takeaway = json_dict.get('is_takeaway')
+        items = _create_order_items(
+            json_dict.get('items')
+        )
 
-        items = json_dict.get('items')
-        items = _create_order_items(items)
-
-        if is_takeaway:
-            type = "Takeaway"
-        if not type:
-            type = "Dine-in"
-
-        return Order(lines, table_no, is_takeaway, remarks, type, items=items)
+        return Order(table_no, type, items, remarks)
 
     def to_json(self):
         items = list(map(lambda x: x.to_json(), self.items))
         return {
             'id': self.id,
-            'type': self.type,
-            # 'lines': self.lines,
-            'remarks': self.remarks,
             'table_no': self.table_no,
-            'is_takeaway': self.is_takeaway,
-            'items': items
+            'type': self.type,
+            'items': items,
+            'remarks': self.remarks
         }
 
 
@@ -62,11 +47,21 @@ class OrderItem(db.Model):
     item_name = db.Column(db.String)
     item_code = db.Column(db.String)
     qty = db.Column(db.Integer)
+    is_voided = db.Column(db.Boolean)
 
     def __init__(self, item_name, item_code, qty):
         self.item_name = item_name
         self.item_code = item_code
         self.qty = qty
+        self.is_voided = True
+
+    @staticmethod
+    def from_json(json_dict):
+        item_name = json_dict.get('item_name')
+        item_code = json_dict.get('item_code')
+        qty = json_dict.get('qty')
+
+        return OrderItem(item_name, item_code, qty)
 
     def to_json(self):
         return {
@@ -93,7 +88,7 @@ def _create_order_items(items):
 
     for item in items:
         order_items.append(
-            OrderItem(item.get('item_name'), item.get('item_code'), item.get('qty'))
+            OrderItem.from_json(item)
         )
 
     return order_items
