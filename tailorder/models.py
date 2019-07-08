@@ -2,7 +2,6 @@ from . import db
 
 
 class Order(db.Model):
-    __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String)
     lines = db.Column(db.String)
@@ -12,7 +11,9 @@ class Order(db.Model):
     is_fulfilled = db.Column(db.Boolean)
     is_cancelled = db.Column(db.Boolean)
 
-    def __init__(self, lines, table_no, is_takeaway=False, remarks=None, type=None):
+    items = db.relationship('OrderItem', backref='order', lazy=True)
+
+    def __init__(self, lines, table_no, is_takeaway=False, remarks=None, type=None, items=None):
         self.lines = lines
         self.table_no = table_no
         self.is_takeaway = is_takeaway
@@ -20,6 +21,9 @@ class Order(db.Model):
         self.is_cancelled = False
         self.remarks = remarks
         self.type = type
+
+        if items:
+            self.items.extend(items)
 
     @staticmethod
     def from_json(json_dict):
@@ -29,21 +33,48 @@ class Order(db.Model):
         table_no = json_dict.get('table_no')
         is_takeaway = json_dict.get('is_takeaway')
 
+        items = json_dict.get('items')
+        items = _create_order_items(items)
+
         if is_takeaway:
             type = "Takeaway"
         if not type:
             type = "Dine-in"
 
-        return Order(lines, table_no, is_takeaway, remarks, type)
+        return Order(lines, table_no, is_takeaway, remarks, type, items=items)
+
+    def to_json(self):
+        items = list(map(lambda x: x.to_json(), self.items))
+        return {
+            'id': self.id,
+            'type': self.type,
+            # 'lines': self.lines,
+            'remarks': self.remarks,
+            'table_no': self.table_no,
+            'is_takeaway': self.is_takeaway,
+            'items': items
+        }
+
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent = db.Column(db.Integer, db.ForeignKey('order.id'))
+    item_name = db.Column(db.String)
+    item_code = db.Column(db.String)
+    qty = db.Column(db.Integer)
+
+    def __init__(self, item_name, item_code, qty):
+        self.item_name = item_name
+        self.item_code = item_code
+        self.qty = qty
 
     def to_json(self):
         return {
             'id': self.id,
-            'type': self.type,
-            'lines': self.lines,
-            'remarks': self.remarks,
-            'table_no': self.table_no,
-            'is_takeaway': self.is_takeaway,
+            'parent': self.parent,
+            'item_name': self.item_name,
+            'item_code': self.item_code,
+            'qty': self.qty
         }
 
 
@@ -55,3 +86,14 @@ class OrderSeries(db.Model):
     def __init__(self, type, idx):
         self.type = type
         self.idx = idx
+
+
+def _create_order_items(items):
+    order_items = []
+
+    for item in items:
+        order_items.append(
+            OrderItem(item.get('item_name'), item.get('item_code'), item.get('qty'))
+        )
+
+    return order_items
