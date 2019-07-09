@@ -55,7 +55,7 @@ def new_order():
     db.session.add(order)
     db.session.commit()
 
-    # _emit_order(order, existing_order)
+    _emit_order(order, existing_order)
 
     return post_process_order(order), 201
 
