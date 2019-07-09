@@ -19,8 +19,14 @@ def void_line():
     item.is_voided = True
 
     if request_data.get('amend'):
+        new_qty = request_data.get('qty')
+
         item_clone = OrderItem.clone(item)
-        item_clone.qty = request_data.get('qty')
+        item_clone.qty = new_qty
+
+        if item.qty <= new_qty:
+            raise Exception('Qty should be less than old qty.')
+
         existing_order.items.append(item_clone)
         existing_order.append_remarks(
             'AMEND QTY {} to {}'.format(item_clone.item_name, item_clone.qty)

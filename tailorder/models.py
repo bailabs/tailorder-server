@@ -67,7 +67,7 @@ class OrderItem(db.Model):
     item_code = db.Column(db.String)
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
-
+    
     def __init__(self, item_name, item_code, qty, creation=None):
         self.item_name = item_name
         self.item_code = item_code
