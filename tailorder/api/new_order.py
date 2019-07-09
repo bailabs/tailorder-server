@@ -3,7 +3,7 @@ from flask.json import loads, dumps
 
 from . import api
 from .. import db
-from ..models import Order, OrderSeries
+from ..models import Order, OrderSeries, OrderItem
 from ..helpers import get_config, get_usb_config, post_process_order
 from ..escpos import get_usb, write_additional
 
@@ -16,16 +16,14 @@ def new_order():
     Create a new order based from the POSTed data
     :return:
     """
-    order = Order.from_json(
-        loads(request.get_data(as_text=True))
-    )
+    order = loads(request.get_data(as_text=True))
 
     existing_order = _get_existing_order_by_table_no(
-        order.table_no
+        order.get('table_no')
     )
 
     if existing_order:
-        additional_items = order.items
+        new_items = OrderItem.list_from_json(order.get('items'))
 
         is_usb = get_config(current_app, 'USB')
         print_item_code = get_config(current_app, 'PRINT_ITEM_CODE')
@@ -36,29 +34,28 @@ def new_order():
 
             write_additional(
                 existing_order.table_no,
-                additional_items,
+                new_items,
                 usb_printer,
                 print_item_code
             )
         except:
             print('Unable to print')
 
-        for item in additional_items:
-            existing_order.items.append(item)
-
+        existing_order.items.extend(new_items)
         order = existing_order
     else:
+        order = Order.from_json(order)
         series = _get_order_series(order.type)
 
         order.table_no = series.idx
         series.increment()
 
-        db.session.add(order)
         db.session.add(series)
 
+    db.session.add(order)
     db.session.commit()
 
-    _emit_order(order, existing_order)
+    # _emit_order(order, existing_order)
 
     return post_process_order(order), 201
 

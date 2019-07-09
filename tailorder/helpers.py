@@ -1,7 +1,8 @@
+from datetime import datetime
+
 from flask import request
 from flask.json import loads, jsonify
-
-from .models import Order
+from tailorder.models import Order
 
 
 def get_config(app, key):

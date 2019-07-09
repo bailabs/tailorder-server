@@ -1,8 +1,12 @@
+import math
+
+from datetime import datetime
 from . import db
 
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    creation = db.Column(db.DateTime, nullable=False)
     type = db.Column(db.String)
     table_no = db.Column(db.Integer)
     items = db.relationship('OrderItem', backref='order', lazy=True)
@@ -19,12 +23,14 @@ class Order(db.Model):
         self.is_fulfilled = False
         self.is_cancelled = False
 
+        self.creation = datetime.now()
+
     @staticmethod
     def from_json(json_dict):
         type = json_dict.get('type')
         remarks = json_dict.get('remarks')
         table_no = json_dict.get('table_no')
-        items = _create_order_items(
+        items = OrderItem.list_from_json(
             json_dict.get('items')
         )
 
@@ -34,6 +40,7 @@ class Order(db.Model):
         items = list(map(lambda x: x.to_json(), self.items))
         return {
             'id': self.id,
+            'creation': self.get_creation(),
             'type': self.type,
             'table_no': self.table_no,
             'items': items,
@@ -42,37 +49,52 @@ class Order(db.Model):
             'is_cancelled': self.is_cancelled
         }
 
+    def get_creation(self):
+        return math.floor(datetime.timestamp(self.creation))
+
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    creation = db.Column(db.DateTime, nullable=False)
     parent = db.Column(db.Integer, db.ForeignKey('order.id'))
     item_name = db.Column(db.String)
     item_code = db.Column(db.String)
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
 
-    def __init__(self, item_name, item_code, qty):
+    def __init__(self, item_name, item_code, qty, creation=None):
         self.item_name = item_name
         self.item_code = item_code
         self.qty = qty
         self.is_voided = True
 
+        self.creation = creation or datetime.now()
+
     @staticmethod
-    def from_json(json_dict):
+    def from_json(json_dict, creation):
         item_name = json_dict.get('item_name')
         item_code = json_dict.get('item_code')
         qty = json_dict.get('qty')
 
-        return OrderItem(item_name, item_code, qty)
+        return OrderItem(item_name, item_code, qty, creation)
+
+    @staticmethod
+    def list_from_json(items):
+        creation = datetime.now()
+        return [OrderItem.from_json(item, creation) for item in items]
 
     def to_json(self):
         return {
             'id': self.id,
+            'creation': self.get_creation(),
             'parent': self.parent,
             'item_name': self.item_name,
             'item_code': self.item_code,
             'qty': self.qty
         }
+
+    def get_creation(self):
+        return math.floor(datetime.timestamp(self.creation))
 
 
 class OrderSeries(db.Model):
@@ -86,14 +108,3 @@ class OrderSeries(db.Model):
 
     def increment(self):
         self.idx = self.idx + 1
-
-
-def _create_order_items(items):
-    order_items = []
-
-    for item in items:
-        order_items.append(
-            OrderItem.from_json(item)
-        )
-
-    return order_items
