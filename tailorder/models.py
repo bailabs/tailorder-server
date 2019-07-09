@@ -50,7 +50,7 @@ class Order(db.Model):
         }
 
     def get_creation(self):
-        return math.floor(datetime.timestamp(self.creation))
+        return math.floor(datetime.timestamp(self.creation) * 1000)
 
 
 class OrderItem(db.Model):
@@ -94,7 +94,7 @@ class OrderItem(db.Model):
         }
 
     def get_creation(self):
-        return math.floor(datetime.timestamp(self.creation))
+        return math.floor(datetime.timestamp(self.creation) * 1000)
 
 
 class OrderSeries(db.Model):
