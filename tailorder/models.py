@@ -52,6 +52,12 @@ class Order(db.Model):
     def get_creation(self):
         return math.floor(datetime.timestamp(self.creation) * 1000)
 
+    def append_remarks(self, remarks):
+        if self.remarks:
+            self.remarks = '{}\n{}'.format(self.remarks, remarks)
+        else:
+            self.remarks = remarks
+
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -66,7 +72,7 @@ class OrderItem(db.Model):
         self.item_name = item_name
         self.item_code = item_code
         self.qty = qty
-        self.is_voided = True
+        self.is_voided = False
 
         self.creation = creation or datetime.now()
 
@@ -90,7 +96,8 @@ class OrderItem(db.Model):
             'parent': self.parent,
             'item_name': self.item_name,
             'item_code': self.item_code,
-            'qty': self.qty
+            'qty': self.qty,
+            'is_voided': self.is_voided
         }
 
     def get_creation(self):

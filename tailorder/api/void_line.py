@@ -4,21 +4,28 @@ from . import api
 from .. import db
 
 from ..helpers import get_existing_order_from_request, post_process_order
+from ..socketio import emit_update
 
 
 @api.route('/void_line', methods=['POST'])
 def void_line():
-    order, request_data = get_existing_order_from_request()
+    """
+    Void lines from existing order
+    :return:
+    """
+    existing_order, request_data = get_existing_order_from_request()
 
-    lines = loads(order.lines)
+    item = existing_order.items[request_data.get('line')]
+    item.is_voided = True
 
-    voided_line = (lines.pop(request_data.get('line')))
-    qty = voided_line['qty']
-    item_name = voided_line['itemName']
+    existing_order.append_remarks(
+        'VOID {} x {}'.format(item.qty, item.item_name)
+    )
 
-    order.lines = dumps(lines)
-    order.remarks = order.remarks + '\nVOID {0} x {1}'.format(qty, item_name)
-
+    db.session.add(existing_order)
+    db.session.add(item)
     db.session.commit()
 
-    return post_process_order(order), 200
+    emit_update(existing_order, 'void')
+
+    return post_process_order(existing_order), 200
