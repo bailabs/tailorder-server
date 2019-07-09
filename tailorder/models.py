@@ -34,10 +34,12 @@ class Order(db.Model):
         items = list(map(lambda x: x.to_json(), self.items))
         return {
             'id': self.id,
-            'table_no': self.table_no,
             'type': self.type,
+            'table_no': self.table_no,
             'items': items,
-            'remarks': self.remarks
+            'remarks': self.remarks,
+            'is_fulfilled': self.is_fulfilled,
+            'is_cancelled': self.is_cancelled
         }
 
 

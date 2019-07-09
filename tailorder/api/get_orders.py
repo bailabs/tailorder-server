@@ -13,3 +13,14 @@ def get_orders():
     return jsonify(
         [order.to_json() for order in Order.query.filter_by(is_fulfilled=False, is_cancelled=False)]
     )
+
+
+@api.route('/all_orders/')
+def get_all_orders():
+    """
+    Get all orders
+    :return:
+    """
+    return jsonify(
+        [order.to_json() for order in Order.query.all()]
+    )
