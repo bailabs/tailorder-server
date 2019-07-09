@@ -89,6 +89,15 @@ class OrderItem(db.Model):
         creation = datetime.now()
         return [OrderItem.from_json(item, creation) for item in items]
 
+    @staticmethod
+    def clone(item):
+        return OrderItem(
+            item.item_name,
+            item.item_code,
+            item.qty,
+            item.creation
+        )
+
     def to_json(self):
         return {
             'id': self.id,
