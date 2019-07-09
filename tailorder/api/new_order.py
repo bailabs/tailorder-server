@@ -20,11 +20,9 @@ def new_order():
         loads(request.get_data(as_text=True))
     )
 
-    existing_order = Order.query.filter_by(
-        table_no=order.table_no,
-        is_fulfilled=False,
-        is_cancelled=False
-    ).first()
+    existing_order = _get_existing_order_by_table_no(
+        order.table_no
+    )
 
     if existing_order:
         additional_items = order.items
@@ -60,10 +58,7 @@ def new_order():
 
     db.session.commit()
 
-    if not existing_order:
-        emit_create(order)
-    else:
-        emit_update(order, 'additional')
+    _emit_order(order, existing_order)
 
     return post_process_order(order), 201
 
@@ -72,3 +67,18 @@ def _get_order_series(order_type):
     return OrderSeries.query.filter_by(
         type=order_type
     ).first()
+
+
+def _get_existing_order_by_table_no(table_no):
+    return Order.query.filter_by(
+        table_no=table_no,
+        is_fulfilled=False,
+        is_cancelled=False
+    ).first()
+
+
+def _emit_order(order, existing_order):
+    if not existing_order:
+        emit_create(order)
+    else:
+        emit_update(order, 'additional')
