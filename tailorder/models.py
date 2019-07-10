@@ -65,12 +65,14 @@ class OrderItem(db.Model):
     parent = db.Column(db.Integer, db.ForeignKey('order.id'))
     item_name = db.Column(db.String)
     item_code = db.Column(db.String)
+    rate = db.Column(db.Float)
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
     
-    def __init__(self, item_name, item_code, qty, creation=None):
+    def __init__(self, item_name, item_code, qty, rate, creation=None):
         self.item_name = item_name
         self.item_code = item_code
+        self.rate = rate
         self.qty = qty
         self.is_voided = False
 
@@ -80,9 +82,10 @@ class OrderItem(db.Model):
     def from_json(json_dict, creation):
         item_name = json_dict.get('item_name')
         item_code = json_dict.get('item_code')
+        rate = json_dict.get('rate')
         qty = json_dict.get('qty')
 
-        return OrderItem(item_name, item_code, qty, creation)
+        return OrderItem(item_name, item_code, qty, rate, creation)
 
     @staticmethod
     def list_from_json(items):
@@ -95,6 +98,7 @@ class OrderItem(db.Model):
             item.item_name,
             item.item_code,
             item.qty,
+            item.rate,
             item.creation
         )
 
@@ -106,6 +110,7 @@ class OrderItem(db.Model):
             'item_name': self.item_name,
             'item_code': self.item_code,
             'qty': self.qty,
+            'rate': self.rate,
             'is_voided': self.is_voided
         }
 
