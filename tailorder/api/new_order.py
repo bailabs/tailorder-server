@@ -45,12 +45,7 @@ def new_order():
         order = existing_order
     else:
         order = Order.from_json(order)
-        series = _get_order_series(order.type)
-
-        order.table_no = series.idx
-        series.increment()
-
-        db.session.add(series)
+        _set_table_no(order)
 
     db.session.add(order)
     db.session.commit()
@@ -72,6 +67,15 @@ def _get_existing_order_by_table_no(table_no):
         is_fulfilled=False,
         is_cancelled=False
     ).first()
+
+
+def _set_table_no(order):
+    if order.type != "Dine-in":
+        series = _get_order_series(order.type)
+        order.table_no = series.idx
+        series.increment()
+
+        db.session.add(series)
 
 
 def _emit_order(order, existing_order):
