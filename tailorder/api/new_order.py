@@ -76,6 +76,9 @@ def _set_table_no(order):
         series.increment()
 
         db.session.add(series)
+    else:
+        if not order.table_no:
+            raise Exception('table_no is required.')
 
 
 def _emit_order(order, existing_order):
