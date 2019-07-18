@@ -5,4 +5,4 @@ ifconfig | grep "inet addr"
 
 echo "--------------------------------------------"
 echo "--------------------------------------------"
-pipenv run python create_instance.py
+pipenv run python start_app.py
