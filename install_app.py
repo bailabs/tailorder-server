@@ -13,7 +13,8 @@ def _create_order_series():
     }
 
     for type, idx in order_types.items():
-        db.session.add(OrderSeries(type, id))
+        print('adding {} to OrderSeries...'.format(type))
+        db.session.add(OrderSeries(type, idx))
 
     db.session.commit()
 
@@ -21,3 +22,5 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         _create_order_series()
+        print("Finished...")
+

@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from .config import Config
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 db = SQLAlchemy()
 socketio = SocketIO()
