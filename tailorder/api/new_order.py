@@ -17,11 +17,7 @@ def new_order():
     :return:
     """
     order = loads(request.get_data(as_text=True))
-
-    existing_order = _get_existing_order_by_table_no(
-        order.get('table_no')
-    )
-
+    existing_order = _get_existing_order_by_table_no(order.get("table_no"))
     if existing_order:
         new_items = OrderItem.list_from_json(order.get('items'))
 
@@ -56,6 +52,7 @@ def new_order():
 
 
 def _get_order_series(order_type):
+
     return OrderSeries.query.filter_by(
         type=order_type
     ).first()
@@ -70,13 +67,14 @@ def _get_existing_order_by_table_no(table_no):
 
 
 def _set_table_no(order):
-    if order.type != "Dine-in":
+    if order.type != "Dine-in" and order.type != "Family":
         series = _get_order_series(order.type)
         order.table_no = series.idx
         series.increment()
 
         db.session.add(series)
     else:
+        print(order.table_no)
         if not order.table_no:
             raise Exception('table_no is required.')
 

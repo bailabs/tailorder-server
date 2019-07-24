@@ -28,6 +28,7 @@ def post_process_order(order):
 def create_order_series(db):
     order_types = {
         'Dine-in': 1,
+        'Family': 1,
         'Takeaway': 201,
         'Delivery': 301,
         'Online': 401
