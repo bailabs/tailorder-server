@@ -11,5 +11,6 @@ flask = "*"
 pytest = "*"
 flask-sqlalchemy = "*"
 flask-socketio = "*"
+flask-cors = "*"
 
 [dev-packages]
