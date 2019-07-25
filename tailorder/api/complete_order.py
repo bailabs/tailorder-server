@@ -13,8 +13,25 @@ def complete_order():
     order, request_data = get_existing_order_from_request()
     order.is_fulfilled = True
 
+
     db.session.commit()
 
     emit_update(order, 'fulfill')
+
+    return post_process_order(order), 200
+
+@api.route('/done_order', methods=['POST'])
+def done_order():
+    """
+    Set the order as finished
+    :return:
+    """
+    order, request_data = get_existing_order_from_request()
+    order.is_finished = True
+
+
+    db.session.commit()
+
+    emit_update(order, 'finish')
 
     return post_process_order(order), 200

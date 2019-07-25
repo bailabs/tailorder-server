@@ -13,6 +13,7 @@ class Order(db.Model):
     remarks = db.Column(db.String)
     is_fulfilled = db.Column(db.Boolean)
     is_cancelled = db.Column(db.Boolean)
+    is_finished = db.Column(db.Boolean)
 
     def __init__(self, table_no, order_type, items, remarks=None):
         self.table_no = table_no
@@ -22,6 +23,7 @@ class Order(db.Model):
 
         self.is_fulfilled = False
         self.is_cancelled = False
+        self.is_finished = False
 
         self.creation = datetime.now()
 
@@ -46,7 +48,8 @@ class Order(db.Model):
             'items': items,
             'remarks': self.remarks,
             'is_fulfilled': self.is_fulfilled,
-            'is_cancelled': self.is_cancelled
+            'is_cancelled': self.is_cancelled,
+            'is_finished': self.is_finished,
         }
 
     def get_creation(self):
