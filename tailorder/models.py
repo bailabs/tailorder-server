@@ -51,7 +51,13 @@ class Order(db.Model):
             'is_cancelled': self.is_cancelled,
             'is_finished': self.is_finished,
         }
-
+    def getindex(self,line_id):
+            print(line_id)
+            items = list(map(lambda x: x.to_json(), self.items))
+            for index,i in enumerate(items):
+                print(i,index)
+                if line_id == i['id']:
+                    return index
     def get_creation(self):
         return math.floor(datetime.timestamp(self.creation) * 1000)
 
@@ -71,13 +77,15 @@ class OrderItem(db.Model):
     rate = db.Column(db.Float)
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
-    
+    is_done = db.Column(db.Boolean)
+
     def __init__(self, item_name, item_code, qty, rate, creation=None):
         self.item_name = item_name
         self.item_code = item_code
         self.rate = rate
         self.qty = qty
         self.is_voided = False
+        self.is_done = False
 
         self.creation = creation or datetime.now()
 
@@ -114,7 +122,8 @@ class OrderItem(db.Model):
             'item_code': self.item_code,
             'qty': self.qty,
             'rate': self.rate,
-            'is_voided': self.is_voided
+            'is_voided': self.is_voided,
+            'is_done': self.is_done
         }
 
     def get_creation(self):

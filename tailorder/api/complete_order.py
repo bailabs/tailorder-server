@@ -35,3 +35,24 @@ def done_order():
     emit_update(order, 'finish')
 
     return post_process_order(order), 200
+
+@api.route('/done_order1', methods=['POST'])
+def done_order1():
+    """
+    Void lines from existing order
+    :return:
+    """
+    existing_order, request_data = get_existing_order_from_request()
+    get_index = existing_order.getindex(request_data.get('line_id'))
+    item = existing_order.items[get_index]
+    item.is_done = True
+
+
+
+    db.session.add(existing_order)
+    db.session.add(item)
+    db.session.commit()
+
+    emit_update(existing_order, 'done')
+
+    return post_process_order(existing_order), 200
