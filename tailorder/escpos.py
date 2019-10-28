@@ -1,6 +1,6 @@
 import time
 
-from flask.json import loads
+from flask.json import loads, dumps
 from escpos.printer import File, Usb
 
 # Line Width
@@ -65,9 +65,11 @@ def write_order(order, usb_printer=None, print_item_code=True):
         p = usb_printer
     else:
         p = File("/dev/usb/lp0")
+    print("ORDER ITEMS")
+    lines = []
+    for i in order.items:
 
-    lines = loads(order.lines)
-
+        lines.append(i.__dict__)
     # Order
     p.text('Order Id: {0}\n'.format(order.id))
 
@@ -75,10 +77,8 @@ def write_order(order, usb_printer=None, print_item_code=True):
     p.text('Table Number: {0}\n'.format(order.table_no))
 
     # Take Away
-    if order.is_takeaway:
-        p.text('Type: TAKE AWAY\n\n')
-    else:
-        p.text('Type: DINE IN\n\n')
+
+    p.text('Type: {0}\n\n'.format(order.type))
 
     # Headers
     header_line = line_block([
@@ -92,19 +92,19 @@ def write_order(order, usb_printer=None, print_item_code=True):
     for line in lines:
         line_text = line_block([
             {'text': line['qty'], 'align': '<', 'width': QTY_WIDTH},
-            {'text': line['itemName'], 'align': '<', 'width': ITEM_WIDTH},
+            {'text': line['item_name'], 'align': '<', 'width': ITEM_WIDTH},
         ])
         p.text(line_text)
 
         if print_item_code:
             item_code = line_block([
                 {'text': '-', 'align': '<', 'width': QTY_WIDTH},
-                {'text': line['itemCode'], 'align': '<', 'width': ITEM_WIDTH}
+                {'text': line['item_code'], 'align': '<', 'width': ITEM_WIDTH}
             ])
             p.text(item_code)
 
     # Remarks
-    p.text('\nRemarks:\n{0}'.format(order.remarks))
+    p.text('\n\nRemarks:\n{0}'.format(order.remarks))
 
     # Time
     p.text('\n\nPrinted on:\n')
