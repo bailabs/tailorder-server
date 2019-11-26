@@ -1,5 +1,5 @@
-from flask import jsonify, request, current_app
-from flask.json import loads, dumps
+from flask import request, current_app, abort
+from flask.json import loads
 
 from . import api
 from .. import db
@@ -18,7 +18,10 @@ def new_order():
     """
     order = loads(request.get_data(as_text=True))
     existing_order = _get_existing_order_by_table_no(order.get("table_no"))
+
     if existing_order:
+        _validate_order_types(order, existing_order)
+
         new_items = OrderItem.list_from_json(order.get('items'))
 
         is_usb = get_config(current_app, 'USB')
@@ -52,7 +55,6 @@ def new_order():
 
 
 def _get_order_series(order_type):
-
     return OrderSeries.query.filter_by(
         type=order_type
     ).first()
@@ -84,3 +86,8 @@ def _emit_order(order, existing_order):
         emit_create(order)
     else:
         emit_update(order, 'additional')
+
+
+def _validate_order_types(order, existing_order):
+    if order.get('type') != existing_order.type:
+        abort(403, description='Order exists with different order type')
