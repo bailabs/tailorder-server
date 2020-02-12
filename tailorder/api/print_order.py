@@ -8,7 +8,6 @@ from ..helpers import get_existing_order_from_request, get_config, get_usb_confi
 @api.route('/print_order', methods=['POST'])
 def print_order():
     print("okay siyaaaaa")
-
     """
     Get the existing Order based from the request
     :return:

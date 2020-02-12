@@ -14,8 +14,10 @@ def void_line():
     :return:
     """
     existing_order, request_data = get_existing_order_from_request()
-
-    item = existing_order.items[request_data.get('line')]
+    print("IDD")
+    print(request_data.get('item_code'))
+    item = [item for item in existing_order.items if item.item_code == request_data.get('item_code')][0]
+    print(item)
     item.is_voided = True
 
     if request_data.get('amend'):
