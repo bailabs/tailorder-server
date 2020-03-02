@@ -67,7 +67,6 @@ class Order(db.Model):
         else:
             self.remarks = remarks
 
-
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     creation = db.Column(db.DateTime, nullable=False)

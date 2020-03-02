@@ -41,6 +41,7 @@ def new_order():
             print('Unable to print')
 
         existing_order.items.extend(new_items)
+        existing_order.is_finished = False
         order = existing_order
     else:
         order = Order.from_json(order)
