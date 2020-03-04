@@ -74,7 +74,7 @@ class OrderItem(db.Model):
     item_name = db.Column(db.String)
     item_code = db.Column(db.String)
     rate = db.Column(db.Float)
-    tax = db.Column(db.Float)
+    tax = db.Column(db.String)
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
     is_done = db.Column(db.Boolean)
