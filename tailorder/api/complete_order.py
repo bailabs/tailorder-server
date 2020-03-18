@@ -29,7 +29,10 @@ def done_order():
     order, request_data = get_existing_order_from_request()
     order.is_finished = True
 
-
+    print("ORDEEEEEEEEEER")
+    print(order.items)
+    for item in order.items:
+        item.is_done = True
     db.session.commit()
 
     emit_update(order, 'finish')

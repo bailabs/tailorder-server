@@ -75,15 +75,17 @@ class OrderItem(db.Model):
     item_code = db.Column(db.String)
     rate = db.Column(db.Float)
     tax = db.Column(db.String)
+    category = db.Column(db.String)
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
     is_done = db.Column(db.Boolean)
 
-    def __init__(self, item_name, item_code, qty, rate, tax, creation=None):
+    def __init__(self, item_name, item_code, qty, rate, tax, category, creation=None):
         self.item_name = item_name
         self.item_code = item_code
         self.rate = rate
         self.tax = tax
+        self.category = category
         self.qty = qty
         self.is_voided = False
         self.is_done = False
@@ -96,9 +98,10 @@ class OrderItem(db.Model):
         item_code = json_dict.get('item_code')
         rate = json_dict.get('rate')
         tax = json_dict.get('tax')
+        category = json_dict.get('category')
         qty = json_dict.get('qty')
 
-        return OrderItem(item_name, item_code, qty, rate, tax, creation)
+        return OrderItem(item_name, item_code, qty, rate, tax,category, creation)
 
     @staticmethod
     def list_from_json(items):
@@ -113,6 +116,7 @@ class OrderItem(db.Model):
             item.qty,
             item.rate,
             item.tax,
+            item.category,
             item.creation
         )
 
@@ -126,6 +130,7 @@ class OrderItem(db.Model):
             'qty': self.qty,
             'rate': self.rate,
             'tax': self.tax,
+            'category': self.category,
             'is_voided': self.is_voided,
             'is_done': self.is_done
         }

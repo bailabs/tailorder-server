@@ -36,7 +36,7 @@ def void_line():
 
     else:
         existing_order.append_remarks(
-            'VOID {} x {}'.format(item.qty, item.item_name)
+            'VOID {}'.format(item.item_name)
         )
 
     db.session.add(existing_order)
