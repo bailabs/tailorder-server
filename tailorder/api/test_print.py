@@ -5,9 +5,6 @@ from ..helpers import post_process_order,get_existing_order_from_request
 
 from escpos import printer
 from bidi.algorithm import get_display
-from wand.image import Image as wImage
-from wand.drawing import Drawing as wDrawing
-from wand.color import Color as wColor
 
 from escpos.printer import Network
 
