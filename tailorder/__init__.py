@@ -9,12 +9,13 @@ from flask_cors import CORS
 __version__ = '0.3.0'
 
 db = SQLAlchemy()
-socketio = SocketIO()
+app = Flask(__name__)
+CORS(app)
+socketio = SocketIO(app=app, cors_allowed_origins='*')
 
 
 def create_app():
-    app = Flask(__name__)
-    CORS(app)
+
     app.config.from_object(Config)
 
     db.init_app(app)
