@@ -12,6 +12,7 @@ from ..socketio import emit_create, emit_update
 
 @api.route('/orders', methods=['POST'])
 def new_order():
+    print("test")
     """
     Create a new order based from the POSTed data
     :return:
@@ -37,18 +38,22 @@ def new_order():
                 usb_printer,
                 print_item_code
             )
+
         except:
             print('Unable to print')
 
         existing_order.items.extend(new_items)
         existing_order.is_finished = False
         order = existing_order
+
     else:
         order = Order.from_json(order)
         _set_table_no(order)
 
+
     db.session.add(order)
     db.session.commit()
+
 
     _emit_order(order, existing_order)
 
@@ -86,6 +91,7 @@ def _emit_order(order, existing_order):
     if not existing_order:
         emit_create(order)
     else:
+        emit_update(order, 'notdone')
         emit_update(order, 'additional')
 
 
