@@ -16,7 +16,8 @@ def test_print():
     # Some variables
     bluetoothSerial = serial.Serial("/dev/rfcomm0", baudrate=9600)
 
-    fontPath = "/usr/share/fonts/opentype/fonts-hosny-thabit/Thabit.ttf"
+    #fontPath = "/usr/share/fonts/opentype/fonts-hosny-thabit/Thabit.ttf"
+    fontPath = "/usr/share/fonts/opentype/linux-libertine/LinBiolinum_RI.otf"
     textUtf8 = u"بعض النصوص من جوجل ترجمة"
     tmpImage = 'my-text.png'
     printFile = "/dev/rfcomm0"
