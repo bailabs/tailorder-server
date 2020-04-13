@@ -65,40 +65,28 @@ def print_bill():
 
 @api.route('/print_receipt', methods=['POST'])
 def print_receipt():
-    print("asdad")
+
     receipt_from_tailpos = loads(request.get_data(as_text=True))
     for_printing = receipt_from_tailpos['data']
-
     print(for_printing)
 
-    #print(loads(for_receipt['data']['mop'])[0]['translation_text'])
-    #reshaped_text = arabic_reshaper.reshape(loads(for_receipt['data']['mop'])[0]['translation_text'])
-    #rev_text = reshaped_text[::-1]  # slice backwards
-
-    # Some variable
     port_serial = "/dev/rfcomm0"
 
     bluetoothSerial = serial.Serial(port_serial, baudrate=115200, timeout=1)
-    fontPath = "/home/pi/FontAljazeeraColor-lzzD.ttf"
+    fontPath = "/home/jiloysss/Documents/spiceco/aljazeera-font/FontAljazeeraColor-lzzD.ttf"
+    #fontPath = "/home/pi/FontAljazeeraColor-lzzD.ttf"
     tmpImage = 'receipt.png'
-    printWidth = 375
+    #printWidth = 375
+    printWidth = 550
 
-    # Get the characters in order
-    #textReshaped = arabic_reshaper.reshape(for_printing['company'])
-    #textDisplay = get_display(textReshaped)
-
-    # PIL can't do this correctly, need to use 'wand'.
-    # Based on
-    # https://stackoverflow.com/questions/5732408/printing-bidi-text-to-an-image
-
-    print(for_printing['header'])
-    print(for_printing['header'].split("\n"))
     height = 600
     draw = wDrawing()
     draw.font = fontPath
+
     #COMPANY ==============
     draw.font_size = 34
     draw.text(x=70,y=75,body=for_printing['company'])
+
     #DATE ==================
     split_date = for_printing['date'].split()
     draw.font_size = 26
@@ -121,7 +109,7 @@ def print_receipt():
 
     draw.text_alignment = "undefined"
 
-    draw.text(x=5,y=y_value + 35 ,body="=======================")
+    draw.text(x=5,y=y_value + 35 ,body="===================================")
 
     #ITEM PURCHASES
     y_value = y_value + 30
@@ -139,12 +127,22 @@ def print_receipt():
                     height += 35
                 y_value = y_value + 35
                 draw.text(x=5,y=y_value,body=i['item_name'][xxx * 17: (xxx+1) * 17])
+            translation_text = ""
+            if i['translation_text']:
+                textReshaped = arabic_reshaper.reshape(i['translation_text'])
+                textDisplay = get_display(textReshaped)
+                translation_text = "(" + textReshaped + ")"
             y_value = y_value + 35
-            draw.text(x=5,y=y_value,body=i['item_name'][(int(quotient)*17): len(i['item_name'])])
+            draw.text(x=5,y=y_value,body=i['item_name'][(int(quotient)*17): len(i['item_name'])] + translation_text )
 
         else:
+            translation_text = ""
+            if i['translation_text']:
+                textReshaped = arabic_reshaper.reshape(i['translation_text'])
+                textDisplay = get_display(textReshaped)
+                translation_text = "(" + textReshaped + ")"
             y_value = y_value + 35
-            draw.text(x=5,y=y_value,body=i['item_name'])
+            draw.text(x=5,y=y_value,body=i['item_name'] + translation_text)
 
 
     draw.text(x=5,y=y_value+35,body="=======================")
