@@ -79,6 +79,7 @@ class OrderItem(db.Model):
     qty = db.Column(db.Integer)
     is_voided = db.Column(db.Boolean)
     is_done = db.Column(db.Boolean)
+    is_new = db.Column(db.Boolean)
 
     def __init__(self, item_name, item_code, qty, rate, tax, category, creation=None):
         self.item_name = item_name
@@ -89,6 +90,7 @@ class OrderItem(db.Model):
         self.qty = qty
         self.is_voided = False
         self.is_done = False
+        self.is_new = True
 
         self.creation = creation or datetime.now()
 
@@ -132,7 +134,8 @@ class OrderItem(db.Model):
             'tax': self.tax,
             'category': self.category,
             'is_voided': self.is_voided,
-            'is_done': self.is_done
+            'is_done': self.is_done,
+            'is_new': self.is_new
         }
 
     def get_creation(self):

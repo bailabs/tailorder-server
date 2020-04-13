@@ -113,6 +113,50 @@ def write_order(order, usb_printer=None, print_item_code=True):
     p.cut()
 
 
+def write_order_void(order, usb_printer=None, print_item_code=True):
+    if usb_printer:
+        p = usb_printer
+    else:
+        p = File("/dev/usb/lp0")
+
+    lines = []
+
+    for i in order.items:
+        lines.append(i.__dict__)
+
+    # Order
+    p.text('Void Items')
+
+
+    # Headers
+    header_line = line_block([
+        {'text': 'Qty', 'align': '<', 'width': QTY_WIDTH},
+        {'text': 'Item', 'align': '<', 'width': ITEM_WIDTH},
+    ])
+
+    p.text(header_line)
+
+    # Lines
+    for line in lines:
+        if line['is_voided']:
+            line_text = line_block([
+                {'text': line['qty'], 'align': '<', 'width': QTY_WIDTH},
+                {'text': line['item_name'], 'align': '<', 'width': ITEM_WIDTH},
+            ])
+            p.text(line_text)
+
+            if print_item_code:
+                item_code = line_block([
+                    {'text': '-', 'align': '<', 'width': QTY_WIDTH},
+                    {'text': line['item_code'], 'align': '<', 'width': ITEM_WIDTH}
+                ])
+                p.text(item_code)
+
+    # Time
+    p.text('\n\nPrinted on:\n')
+    p.text(time.ctime())
+
+    p.cut()
 def get_usb(config):
     return Usb(
         config['id_vendor'],
