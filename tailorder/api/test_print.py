@@ -79,7 +79,7 @@ def print_receipt():
     port_serial = "/dev/rfcomm0"
 
     bluetoothSerial = serial.Serial(port_serial, baudrate=115200, timeout=1)
-    fontPath = "/home/jiloysss/Documents/spiceco/aljazeera-font/FontAljazeeraColor-lzzD.ttf"
+    fontPath = "/home/pi/FontAljazeeraColor-lzzD.ttf"
     tmpImage = 'receipt.png'
     printWidth = 375
 
