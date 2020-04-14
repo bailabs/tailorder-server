@@ -77,7 +77,7 @@ def print_receipt():
     fontPath = "/home/pi/FontAljazeeraColor-lzzD.ttf"
     tmpImage = 'receipt.png'
     #printWidth = 375
-    printWidth = 580
+    printWidth = 570
 
     height = 600
     draw = wDrawing()
