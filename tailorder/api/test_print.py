@@ -85,13 +85,15 @@ def print_receipt():
 
     #COMPANY ==============
     draw.font_size = 34
-    draw.text(x=70,y=75,body=for_printing['company'])
+
+    draw.text(x=180,y=75,body=for_printing['company'])
+
 
     #DATE ==================
     split_date = for_printing['date'].split()
     draw.font_size = 26
     draw.text(x=5,y=110,body=split_date[0])
-    draw.text(x=170,y=110,body=split_date[1])
+    draw.text(x=260,y=110,body=split_date[1])
 
     #ORDER TYPE ==============
     draw.font_size = 26
