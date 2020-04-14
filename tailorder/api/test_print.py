@@ -77,7 +77,7 @@ def print_receipt():
     fontPath = "/home/pi/FontAljazeeraColor-lzzD.ttf"
     tmpImage = 'receipt.png'
     #printWidth = 375
-    printWidth = 550
+    printWidth = 580
 
     height = 600
     draw = wDrawing()
@@ -109,7 +109,7 @@ def print_receipt():
 
     draw.text_alignment = "undefined"
 
-    draw.text(x=5,y=y_value + 35 ,body="===================================")
+    draw.text(x=5,y=y_value + 35 ,body="=====================================")
 
     #ITEM PURCHASES
     y_value = y_value + 30
@@ -145,7 +145,7 @@ def print_receipt():
             draw.text(x=5,y=y_value,body=i['item_name'] + translation_text)
 
 
-    draw.text(x=5,y=y_value+35,body="=======================")
+    draw.text(x=5,y=y_value+35,body="=====================================")
 
     y_value = y_value + 35
 
@@ -210,7 +210,7 @@ def print_receipt():
     draw.text(x=5,y=y_value + 43,body=str(format(float(for_printing['change']), '.2f')))
     draw.gravity = "forget"
 
-    draw.text(x=5,y=y_value+105,body="=======================")
+    draw.text(x=5,y=y_value+105,body="=====================================")
 
     #FOOTER ==========
 
