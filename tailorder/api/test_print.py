@@ -122,20 +122,20 @@ def print_receipt():
         draw.text(x=5,y=y_value + 10,body=format(float(i['qty'] * i['price']), '.2f'))
         draw.gravity = "forget"
 
-        if len(i['item_name']) > 17:
-            quotient = len(i['item_name']) / 17
+        if len(i['item_name']) > 22:
+            quotient = len(i['item_name']) / 22
             for xxx in range(0,int(quotient)):
                 if idx != 0:
                     height += 35
                 y_value = y_value + 35
-                draw.text(x=5,y=y_value,body=i['item_name'][xxx * 17: (xxx+1) * 17])
+                draw.text(x=5,y=y_value,body=i['item_name'][xxx * 22: (xxx+1) * 22])
             translation_text = ""
             if i['translation_text']:
                 textReshaped = arabic_reshaper.reshape(i['translation_text'])
                 textDisplay = get_display(textReshaped)
                 translation_text = "(" + textReshaped + ")"
             y_value = y_value + 35
-            draw.text(x=5,y=y_value,body=i['item_name'][(int(quotient)*17): len(i['item_name'])] + translation_text )
+            draw.text(x=5,y=y_value,body=i['item_name'][(int(quotient)*22): len(i['item_name'])] + translation_text )
 
         else:
             translation_text = ""
@@ -144,7 +144,9 @@ def print_receipt():
                 textDisplay = get_display(textReshaped)
                 translation_text = "(" + textReshaped + ")"
             y_value = y_value + 35
-            draw.text(x=5,y=y_value,body=i['item_name'] + translation_text)
+            draw.text(x=5,y=y_value,body=i['item_name'] )
+            y_value = y_value + 35
+            draw.text(x=5,y=y_value,body= translation_text)
 
 
     draw.text(x=5,y=y_value+35,body="=====================================")
